@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BS 5975 Load Calculator</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    input, label { display: block; margin: 10px 0; width: 100%; }
+    button { padding: 10px 20px; font-size: 16px; }
+    #result { margin-top: 20px; font-weight: bold; white-space: pre-line; }
+  </style>
+</head>
+<body>
+  <h2>BS 5975 Concrete Load Calculator</h2>
+
+  <label>Slab Thickness (mm):</label>
+  <input type="number" id="thickness" placeholder="e.g., 300" required>
+
+  <label>Slab Area (m²):</label>
+  <input type="number" id="area" placeholder="e.g., 20" required>
+
+  <button onclick="calculateLoad()">Calculate Load</button>
+
+  <div id="result"></div>
+
+  <script>
+    function calculateLoad() {
+      const thickness_mm = parseFloat(document.getElementById("thickness").value);
+      const area = parseFloat(document.getElementById("area").value);
+
+      if (isNaN(thickness_mm) || isNaN(area)) {
+        document.getElementById("result").innerText = "Please enter both thickness and area.";
+        return;
+      }
+
+      const thickness_m = thickness_mm / 1000;
+      const formworkLoad = 0.5; // kN/m²
+      const concreteLoad = 25 * thickness_m; // kN/m²
+
+      let constructionLoad;
+      if (thickness_mm <= 300) {
+        constructionLoad = 1.5;
+      } else if (thickness_mm <= 700) {
+        constructionLoad = 0.75 + 0.1 * 25 * thickness_m;
+      } else {
+        constructionLoad = 2.5;
+      }
+
+      const totalLoad_kNm2 = formworkLoad + concreteLoad + constructionLoad;
+      const totalLoad_kN = totalLoad_kNm2 * area;
+
+      document.getElementById("result").innerText = 
+        `Formwork Load: ${formworkLoad.toFixed(2)} kN/m²
+Concrete Load: ${concreteLoad.toFixed(2)} kN/m²
+Construction Load: ${constructionLoad.toFixed(2)} kN/m²
+
+Total Imposed Load: ${totalLoad_kNm2.toFixed(2)} kN/m²
+Total Load Over Area (${area} m²): ${totalLoad_kN.toFixed(2)} kN`;
+    }
+  </script>
+</body>
+</html>
